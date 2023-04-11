@@ -4,24 +4,10 @@ const Room = require('../models/room.model');
 // ------------------- add roomType --------------------------
 const addRoomType = async (req, res, next) => {
   try {
-    const {
-      title,
-      capacity,
-      basePrice,
-      discountPrice,
-      status,
-      amenityList,
-    } = req.body;
-    await RoomType.create({
-      title,
-      capacity,
-      basePrice,
-      discountPrice,
-      status,
-      amenityList,
-    });
+    const roomType = await RoomType.create({ ...req.body });
     res.status(200).send({
       message: 'Room type added successfully',
+      roomType,
     });
   } catch (error) {
     next(error);
@@ -31,12 +17,12 @@ const addRoomType = async (req, res, next) => {
 // ------------------ add room ------------------------------
 const addRoom = async (req, res, next) => {
   try {
-    const host = 'http://localhost:4000';
-    const images = req.files.map((file) => host + file.path.replace('public', ''));
+    const version = '/v1';
+    const images = req.files.map((file) => version + file.path.replace('public', ''));
     const room = await Room.create({ ...req.body, images });
     res.status(200).json({
       message: 'Room added successfully',
-      room
+      room,
     });
   } catch (error) {
     next(error);

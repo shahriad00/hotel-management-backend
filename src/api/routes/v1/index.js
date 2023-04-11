@@ -1,5 +1,5 @@
 const express = require('express');
-const path = require('path');
+// const path = require('path');
 const userRoutes = require('./user.route');
 const authRoutes = require('./auth.route');
 const roomRoutes = require('./room.route');
@@ -16,14 +16,12 @@ router.get('/status', (req, res) => res.send('OK'));
  */
 router.use('/docs', express.static('docs'));
 
+router.use('/', express.static('public'));
+
 router.use('/users', userRoutes);
 
 router.use('/auth', authRoutes);
 
 router.use('/room', roomRoutes);
-
-router.use('/room', (req, res) => {
-  res.send({ message: path.join(__dirname, '../public/images/seven-earth.png') });
-});
 
 module.exports = router;

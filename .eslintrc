@@ -11,7 +11,7 @@
     "mocha": true
   },
   "parserOptions": {
-    "ecmaVersion": 8
+    "ecmaVersion": 2021
   },
   "extends": [
     "airbnb-base"
