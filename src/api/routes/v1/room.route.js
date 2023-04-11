@@ -6,11 +6,15 @@ const { imageUpload } = require('../../middlewares/uploadImage');
 const router = express.Router();
 
 router
-  .route('/room-type')
-  .post(authorize(), controller.addRoomType);
+  .get('/room-type/:id', authorize(), controller.getSingleRoomType)
+  .get('/room-type', authorize(), controller.getAllRoomTypes)
+  .post('/room-type', authorize(), controller.addRoomType)
+  .patch('/room-type/:id', authorize(), controller.updateRoomType);
 
 router
-  .route('/room')
-  .post(authorize(), imageUpload.array('images', 4), controller.addRoom);
+  .get('/room/:id', authorize(), controller.getSingleRoom)
+  .get('/room', authorize(), controller.getAllRoom)
+  .post('/room', authorize(), imageUpload.array('images', 4), controller.addRoom)
+  .patch('/room/:id', authorize(), imageUpload.array('images', 4), controller.updateRoom);
 
 module.exports = router;

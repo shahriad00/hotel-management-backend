@@ -22,6 +22,6 @@ router.use('/users', userRoutes);
 
 router.use('/auth', authRoutes);
 
-router.use('/room', roomRoutes);
+router.use('/', roomRoutes);
 
 module.exports = router;
