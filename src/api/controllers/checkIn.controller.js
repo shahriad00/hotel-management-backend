@@ -3,7 +3,9 @@ const CheckIn = require('../models/checkIn.model');
 // ------------------- add Check In --------------------------
 const addCheckIn = async (req, res, next) => {
   try {
-    const checkIn = await CheckIn.create({ ...req.body });
+    const version = '/v1';
+    const images = req.files.map((file) => version + file.path.replace('public', ''));
+    const checkIn = await CheckIn.create({ ...req.body, images });
     res.status(200).send({
       message: 'Check In completed successfully',
       checkIn,

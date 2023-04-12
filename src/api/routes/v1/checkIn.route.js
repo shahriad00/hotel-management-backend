@@ -8,5 +8,7 @@ const router = express.Router();
 router
   .get('/:id', authorize(), controller.addCheckIn)
   .get('/', authorize(), controller.getAllCheckIns)
-  .post('/', authorize(), imageUpload.array('images', 6), controller.addCheckIn)
-  .patch('/:id', authorize(), controller.updateRoomType);
+  .post('/', authorize(), imageUpload.array('images', 6), controller.addCheckIn);
+// .patch('/:id', authorize(), controller.updateCheckIn);
+
+module.exports = router;
