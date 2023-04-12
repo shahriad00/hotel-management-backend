@@ -13,13 +13,12 @@ const roomTypeSchema = new mongoose.Schema({
     trim: true,
   },
   basePrice: {
-    type: String,
+    type: Number,
     required: true,
     trim: true,
   },
   discountPrice: {
-    type: String,
-    trim: true,
+    type: Number,
   },
   status: {
     type: String,
