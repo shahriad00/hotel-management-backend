@@ -13,7 +13,7 @@ router
 
 router
   .get('/room/:id', authorize(), controller.getSingleRoom)
-  .get('/room', authorize(), controller.getAllRoom)
+  .get('/rooms', authorize(), controller.getAllRoom)
   .post('/room', authorize(), imageUpload.array('images', 4), controller.addRoom)
   .patch('/room/:id', authorize(), imageUpload.array('images', 4), controller.updateRoom);
 

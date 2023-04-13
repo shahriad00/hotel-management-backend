@@ -68,7 +68,7 @@ const updateRoomType = async (req, res, next) => {
 const addRoom = async (req, res, next) => {
   try {
     const version = '/v1';
-    const images = req.files.map((file) => version + file.path.replace('public', ''));
+    const images = req.files && req.files.map((file) => version + file.path.replace('public', ''));
     const room = await Room.create({ ...req.body, images });
     res.status(200).json({
       message: 'Room added successfully',

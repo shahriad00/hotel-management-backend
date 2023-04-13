@@ -8,6 +8,9 @@ const roomSchema = new Schema({
     ref: 'RoomType',
     required: true,
   },
+  roomTypeName: {
+    type: String,
+  },
   name: {
     type: String,
     required: true,
