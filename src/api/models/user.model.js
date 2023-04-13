@@ -11,7 +11,7 @@ const { env, jwtSecret, jwtExpirationInterval } = require('../../config/vars');
 /**
 * User Roles
 */
-const roles = ['user', 'admin'];
+const roles = ['accountant', 'admin', 'receptionist'];
 
 /**
  * User Schema
@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: roles,
-    default: 'user',
+    default: 'receptionist',
   },
   picture: {
     type: String,
