@@ -15,7 +15,7 @@ const roomSelectionSchema = new mongoose.Schema({
 const checkInSchema = new mongoose.Schema({
   checkIn: { type: Date, required: true },
   checkOut: { type: Date, required: true },
-  selectRoom: [roomSelectionSchema],
+  selectRooms: [roomSelectionSchema],
   name: { type: String, required: true },
   email:
     {
@@ -35,10 +35,11 @@ const checkInSchema = new mongoose.Schema({
   companyName: { type: String },
   otherPerson: [otherPersonSchema],
   bookedBy: { type: String },
-  referencedBy: { type: String },
-  reasonOfStay: { type: String },
+  referencedById: { type: mongoose.Schema.Types.ObjectId, ref: 'Reference' },
+  referencedByName: { type: String },
+  reasonOfStay: { type: String, required: true },
   images: [String],
-  paymentType: { type: String },
+  paymentType: { type: String, required: true },
   advancePayment: { type: Number },
   amountFixed: { type: Number },
   date: { type: Date, default: new Date() },
