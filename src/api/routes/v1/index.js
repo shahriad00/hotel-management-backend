@@ -26,7 +26,7 @@ router.use('/auth', authRoutes);
 
 router.use('/', roomRoutes);
 
-router.use('/checkIn', checkInRoute);
+router.use('/check-in', checkInRoute);
 
 router.use('/reference', referenceRoute);
 

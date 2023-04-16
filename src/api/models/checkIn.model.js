@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const otherPersonSchema = new mongoose.Schema({
   name: { type: String },
-  IdType: { type: String },
-  IdNo: { type: String },
+  idType: { type: String },
+  idNumber: { type: String },
 });
 
 const roomSelectionSchema = new mongoose.Schema({
@@ -17,29 +17,20 @@ const checkInSchema = new mongoose.Schema({
   checkOut: { type: Date, required: true },
   selectRooms: [roomSelectionSchema],
   name: { type: String, required: true },
-  email:
-    {
-      type: String,
-      trim: true,
-      lowercase: true,
-      unique: true,
-      required: 'Email address is required',
-      // eslint-disable-next-line no-useless-escape
-      match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/, 'Please fill a valid email address'],
-    },
+  email: { type: String, required: false, unique: false },
   mobile: { type: String, required: true },
-  address: { type: String, required: true },
-  country: { type: String, required: true },
-  guestIdType: { type: String, required: true },
-  guestIdNo: { type: String, required: true },
+  address: { type: String },
+  country: { type: String },
+  guestIdType: { type: String },
+  guestIdNo: { type: String },
   companyName: { type: String },
   otherPerson: [otherPersonSchema],
   bookedBy: { type: String },
-  referencedById: { type: mongoose.Schema.Types.ObjectId, ref: 'Reference' },
+  referencedById: { type: String },
   referencedByName: { type: String },
-  reasonOfStay: { type: String, required: true },
+  reasonOfStay: { type: String },
   images: [String],
-  paymentType: { type: String, required: true },
+  paymentType: { type: String },
   advancePayment: { type: Number },
   amountFixed: { type: Number },
   date: { type: Date, default: new Date() },
