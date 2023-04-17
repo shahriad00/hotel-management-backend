@@ -33,6 +33,8 @@ const checkInSchema = new mongoose.Schema({
   paymentType: { type: String },
   advancePayment: { type: Number },
   amountFixed: { type: Number },
+  durationOfStay: { type: Number },
+  isCheckedOut: { type: Boolean, default: false },
   date: { type: Date, default: new Date() },
 });
 

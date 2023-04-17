@@ -1,3 +1,4 @@
+const moment = require('moment');
 const CheckIn = require('../models/checkIn.model');
 const Room = require('../models/room.model');
 
@@ -16,14 +17,24 @@ const updateRoom = async (roomId) => {
 const addCheckIn = async (req, res, next) => {
   try {
     console.log(req.body);
+    const checkInDate = req.body.checkIn;
+    const checkOutDate = req.body.checkOut;
     const newSelectRooms = req.body.selectRooms;
     const newOtherPerson = req.body.otherPerson;
+    const otherPerson = JSON.parse(newOtherPerson);
+
     const selectRooms = JSON.parse(newSelectRooms);
     // eslint-disable-next-line array-callback-return
     selectRooms.map((room) => {
       updateRoom(room.roomId);
     });
-    const otherPerson = JSON.parse(newOtherPerson);
+
+    // calculate the duration between the two dates
+    const start = moment(checkInDate);
+    const end = moment(checkOutDate);
+    const duration = moment.duration(end.diff(start));
+    const durationOfStay = duration.asDays();
+
     const version = '/v1';
     const images = req.files.map((file) => version + file.path.replace('public', ''));
     const checkIn = await CheckIn.create({
@@ -31,6 +42,7 @@ const addCheckIn = async (req, res, next) => {
       images,
       selectRooms,
       otherPerson,
+      durationOfStay,
     });
     res.status(200).send({
       message: 'Check In completed successfully',
