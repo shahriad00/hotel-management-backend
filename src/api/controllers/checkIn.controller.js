@@ -1,6 +1,9 @@
 const moment = require('moment');
 const CheckIn = require('../models/checkIn.model');
 const Room = require('../models/room.model');
+const AdvancePayment = require('../models/advance.model');
+
+// room status updated when checked-In
 
 const updateRoom = async (roomId) => {
   const updatedRoom = await Room.findByIdAndUpdate(
@@ -9,20 +12,21 @@ const updateRoom = async (roomId) => {
       status: 'booked',
     },
   );
-  updatedRoom.save();
+  await updatedRoom.save();
 };
 
 // ------------------- add Check In --------------------------
 
 const addCheckIn = async (req, res, next) => {
   try {
-    console.log(req.body);
     const checkInDate = req.body.checkIn;
     const checkOutDate = req.body.checkOut;
     const newSelectRooms = req.body.selectRooms;
     const newOtherPerson = req.body.otherPerson;
-    const otherPerson = JSON.parse(newOtherPerson);
+    const newAdvancePayment = req.body.advancePayment;
 
+    const otherPerson = JSON.parse(newOtherPerson);
+    const advancePayment = JSON.parse(newAdvancePayment);
     const selectRooms = JSON.parse(newSelectRooms);
     // eslint-disable-next-line array-callback-return
     selectRooms.map((room) => {
@@ -47,6 +51,15 @@ const addCheckIn = async (req, res, next) => {
     res.status(200).send({
       message: 'Check In completed successfully',
       checkIn,
+    });
+    const advancePaymentAmount = await AdvancePayment.create({
+      checkInID: checkIn._id,
+      paymentType: advancePayment.paymentType,
+      amount: advancePayment.amount,
+    });
+    res.status(200).send({
+      message: 'Check In completed successfully',
+      advancePaymentAmount,
     });
   } catch (error) {
     next(error);
@@ -78,8 +91,27 @@ const getAllCheckIns = async (req, res, next) => {
   }
 };
 
+const addAdvanceAmount = async (req, res, next) => {
+  try {
+    const { checkInID } = req.body;
+    await AdvancePayment.create({ ...req.body });
+
+    const advanceAmount = await AdvancePayment.find({ checkInID });
+
+    let totalAmount = 0;
+
+    for (let i = 0; i < advanceAmount.length; i++) {
+      totalAmount += parseFloat(advanceAmount[i].amount);
+    }
+    res.status(200).send({ totalAmount });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   addCheckIn,
   getSingleCheckIn,
   getAllCheckIns,
+  addAdvanceAmount,
 };

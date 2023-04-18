@@ -31,7 +31,7 @@ const checkInSchema = new mongoose.Schema({
   reasonOfStay: { type: String },
   images: [String],
   paymentType: { type: String },
-  advancePayment: { type: Number },
+  totalAdvance: { type: Number },
   amountFixed: { type: Number },
   durationOfStay: { type: Number },
   isCheckedOut: { type: Boolean, default: false },

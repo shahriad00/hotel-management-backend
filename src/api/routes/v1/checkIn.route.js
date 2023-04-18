@@ -6,7 +6,7 @@ const { imageUpload } = require('../../middlewares/uploadImage');
 const router = express.Router();
 
 router
-  .get('/:id', authorize(), controller.addCheckIn)
+  .get('/:id', authorize(), controller.getSingleCheckIn)
   .get('/', authorize(), controller.getAllCheckIns)
   .post('/', authorize(), imageUpload.array('images', 6), controller.addCheckIn);
 // .patch('/:id', authorize(), controller.updateCheckIn);

@@ -5,6 +5,7 @@ const authRoutes = require('./auth.route');
 const roomRoutes = require('./room.route');
 const checkInRoute = require('./checkIn.route');
 const referenceRoute = require('./reference.route');
+const advanceRoute = require('./advance.route');
 
 const router = express.Router();
 
@@ -29,5 +30,7 @@ router.use('/', roomRoutes);
 router.use('/check-in', checkInRoute);
 
 router.use('/reference', referenceRoute);
+
+router.use('/', advanceRoute);
 
 module.exports = router;
