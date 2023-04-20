@@ -16,6 +16,6 @@ const roomBookingStatusSchema = new mongoose.Schema({
   },
 });
 
-const AdvancePayment = mongoose.model('AdvancePayment', roomBookingStatusSchema);
+const RoomBookingStatus = mongoose.model('RoomBookingStatus', roomBookingStatusSchema);
 
-module.exports = AdvancePayment;
+module.exports = RoomBookingStatus;

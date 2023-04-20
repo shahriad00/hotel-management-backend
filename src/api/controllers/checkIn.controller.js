@@ -2,6 +2,7 @@ const moment = require('moment');
 const CheckIn = require('../models/checkIn.model');
 const Room = require('../models/room.model');
 const AdvancePayment = require('../models/advance.model');
+const RoomBookingStatus = require('../models/roomBookingStatus.model');
 
 // room status updated when checked-In
 
@@ -13,6 +14,14 @@ const updateRoom = async (roomId) => {
     },
   );
   await updatedRoom.save();
+};
+
+const addRoomBookingStatus = async (room) => {
+  await RoomBookingStatus.create({
+    roomId: room.roomId,
+    from: room.checkIn,
+    to: room.checkOut,
+  });
 };
 
 // ------------------- add Check In --------------------------
@@ -31,6 +40,7 @@ const addCheckIn = async (req, res, next) => {
     // eslint-disable-next-line array-callback-return
     selectRooms.map((room) => {
       updateRoom(room.roomId);
+      addRoomBookingStatus(room);
     });
 
     // calculate the duration between the two dates
@@ -100,6 +110,7 @@ const addAdvanceAmount = async (req, res, next) => {
 
     let totalAmount = 0;
 
+    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < advanceAmount.length; i++) {
       totalAmount += parseFloat(advanceAmount[i].amount);
     }
