@@ -2,7 +2,9 @@ const mongoose = require('mongoose');
 
 const advancePaymentSchema = new mongoose.Schema({
   checkInID: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CheckIn',
+    required: true,
   },
   paymentType: {
     type: String,

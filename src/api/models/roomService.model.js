@@ -4,7 +4,8 @@ const { Schema } = mongoose;
 
 const roomServiceSchema = new Schema({
   checkInID: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CheckIn',
     required: true,
   },
   itemName: {
