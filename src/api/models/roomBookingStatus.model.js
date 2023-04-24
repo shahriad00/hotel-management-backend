@@ -6,6 +6,9 @@ const roomBookingStatusSchema = new mongoose.Schema({
     ref: 'Room',
     required: true,
   },
+  roomName: {
+    type: String,
+  },
   from: {
     type: Date,
     required: true,

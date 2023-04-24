@@ -19,6 +19,7 @@ const updateRoom = async (roomId) => {
 const addRoomBookingStatus = async (room) => {
   await RoomBookingStatus.create({
     roomId: room.roomId,
+    roomName: room.roomName,
     from: room.checkIn,
     to: room.checkOut,
   });
