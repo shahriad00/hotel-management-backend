@@ -1,5 +1,6 @@
 const RoomType = require('../models/roomType.model');
 const Room = require('../models/room.model');
+const RoomBookingStatus = require('../models/roomBookingStatus.model');
 
 // ------------------- add roomType --------------------------
 const addRoomType = async (req, res, next) => {
@@ -127,6 +128,53 @@ const getAllRoom = async (req, res, next) => {
   }
 };
 
+// ------------ get available room by search ---------------
+
+const getAvailableRooms = async (req, res, next) => {
+  try {
+    const { from, to } = req.query;
+
+    // Convert the query parameters to Date objects
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+
+    // Search for data that falls within the date range
+    const availableRooms = await RoomBookingStatus.find({
+      $nor: [
+        {
+          $and: [
+            { from: { $gte: fromDate } },
+            { from: { $lte: toDate } },
+          ],
+        },
+        {
+          $and: [
+            { to: { $gte: fromDate } },
+            { to: { $lte: toDate } },
+          ],
+        },
+      ],
+    });
+
+    res.status(200).send(availableRooms);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllRoomStatus = async (req, res, next) => {
+  try {
+    RoomBookingStatus.find({})
+      .sort({ _id: -1 })
+      .exec((err, roomStatusList) => {
+        const allRoomStatus = roomStatusList.map((roomStatus) => roomStatus);
+        res.status(200).send(allRoomStatus);
+      });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   addRoom,
   getAllRoom,
@@ -136,4 +184,6 @@ module.exports = {
   updateRoomType,
   getAllRoomTypes,
   getSingleRoomType,
+  getAvailableRooms,
+  getAllRoomStatus,
 };

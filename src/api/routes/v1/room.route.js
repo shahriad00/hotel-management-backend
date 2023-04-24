@@ -17,4 +17,9 @@ router
   .post('/room', authorize(), imageUpload.array('images', 4), controller.addRoom)
   .patch('/room/:id', authorize(), imageUpload.array('images', 4), controller.updateRoom);
 
+// search
+router
+  .get('/search', authorize(), controller.getAvailableRooms)
+  .get('/all-room-status', authorize(), controller.getAllRoomStatus);
+
 module.exports = router;
