@@ -40,7 +40,7 @@ const checkInSchema = new mongoose.Schema({
   date: { type: Date, default: new Date() },
   type: { type: String, enum: types, default: 'check-in' },
   pickup: { type: String },
-  pickupCharge: { type: String },
+  pickupCharge: { type: Number },
   specialInstruction: { type: String },
 });
 
