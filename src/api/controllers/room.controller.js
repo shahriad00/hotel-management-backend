@@ -1,3 +1,4 @@
+const moment = require('moment/moment');
 const RoomType = require('../models/roomType.model');
 const Room = require('../models/room.model');
 const RoomBookingStatus = require('../models/roomBookingStatus.model');
@@ -50,7 +51,12 @@ const updateRoomType = async (req, res, next) => {
     const updatedRoomType = await RoomType.findByIdAndUpdate(
       { _id },
       {
-        title, capacity, basePrice, discountPrice, status, amenityList,
+        title,
+        capacity,
+        basePrice,
+        discountPrice,
+        status,
+        amenityList,
       },
     );
     await updatedRoomType.save();
@@ -69,7 +75,8 @@ const updateRoomType = async (req, res, next) => {
 const addRoom = async (req, res, next) => {
   try {
     const version = '/v1';
-    const images = req.files && req.files.map((file) => version + file.path.replace('public', ''));
+    const images = req.files
+      && req.files.map((file) => version + file.path.replace('public', ''));
     const room = await Room.create({ ...req.body, images });
     res.status(200).json({
       message: 'Room added successfully',
@@ -90,7 +97,12 @@ const updateRoom = async (req, res, next) => {
     const updatedRoom = await Room.findByIdAndUpdate(
       { _id },
       {
-        roomTypeId, name, floorNo, status, details, images,
+        roomTypeId,
+        name,
+        floorNo,
+        status,
+        details,
+        images,
       },
     );
     await updatedRoom.save();
@@ -135,28 +147,24 @@ const getAvailableRooms = async (req, res, next) => {
     const { from, to } = req.query;
 
     // Convert the query parameters to Date objects
-    const fromDate = new Date(from);
-    const toDate = new Date(to);
+    const fromDate = moment(from).format('YYYY-MM-DD');
+    const toDate = moment(to).format('YYYY-MM-DD');
 
     // Search for data that falls within the date range
-    const availableRooms = await RoomBookingStatus.find({
-      $nor: [
+    const selectedRooms = await RoomBookingStatus.find({
+      $or: [
         {
-          $and: [
-            { from: { $gte: fromDate } },
-            { from: { $lte: toDate } },
-          ],
+          $or: [{ from: { $gte: fromDate } }, { from: { $lte: toDate } }],
         },
         {
-          $and: [
-            { to: { $gte: fromDate } },
-            { to: { $lte: toDate } },
-          ],
+          $or: [{ to: { $gte: fromDate } }, { to: { $lte: toDate } }],
         },
       ],
     });
 
-    res.status(200).send(availableRooms);
+    const allRooms = await Room.find({}).sort({ _id: -1 });
+
+    res.status(200).send({ allRooms, selectedRooms });
   } catch (error) {
     next(error);
   }

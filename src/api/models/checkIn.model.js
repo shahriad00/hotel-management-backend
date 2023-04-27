@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const types = ['booking', 'check-in'];
+
 const otherPersonSchema = new mongoose.Schema({
   name: { type: String },
   idType: { type: String },
@@ -36,6 +38,10 @@ const checkInSchema = new mongoose.Schema({
   durationOfStay: { type: Number },
   isCheckedOut: { type: Boolean, default: false },
   date: { type: Date, default: new Date() },
+  type: { type: String, enum: types, default: 'check-in' },
+  pickup: { type: String },
+  pickupCharge: { type: String },
+  specialInstruction: { type: String },
 });
 
 const CheckIn = mongoose.model('CheckIn', checkInSchema);
