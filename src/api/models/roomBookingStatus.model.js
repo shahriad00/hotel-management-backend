@@ -17,6 +17,9 @@ const roomBookingStatusSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  type: {
+    type: String,
+  },
 });
 
 const RoomBookingStatus = mongoose.model('RoomBookingStatus', roomBookingStatusSchema);

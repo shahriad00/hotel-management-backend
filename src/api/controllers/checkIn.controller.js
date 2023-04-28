@@ -16,12 +16,13 @@ const updateRoom = async (roomId) => {
   await updatedRoom.save();
 };
 
-const addRoomBookingStatus = async (room) => {
+const addRoomBookingStatus = async (room, type) => {
   await RoomBookingStatus.create({
     roomId: room.roomId,
     roomName: room.roomName,
     from: room.checkIn,
     to: room.checkOut,
+    type,
   });
 };
 
@@ -41,7 +42,7 @@ const addCheckIn = async (req, res, next) => {
     // eslint-disable-next-line array-callback-return
     selectRooms.map((room) => {
       updateRoom(room.roomId);
-      addRoomBookingStatus(room);
+      addRoomBookingStatus(room, req.body.type);
     });
 
     // calculate the duration between the two dates
@@ -102,6 +103,8 @@ const getAllCheckIns = async (req, res, next) => {
   }
 };
 
+// ------------ get Advance Amount -----------------------
+
 const addAdvanceAmount = async (req, res, next) => {
   try {
     const { checkInID } = req.body;
@@ -121,9 +124,27 @@ const addAdvanceAmount = async (req, res, next) => {
   }
 };
 
+// ------------ moving booking to check-in -----------------------
+
+const updateBookingToCheckIn = async (req, res, next) => {
+  try {
+    const _id = req.params.id;
+    const { type } = req.body;
+    const updateBooking = await CheckIn.findByIdAndUpdate(
+      { _id },
+      { type },
+    );
+    updateBooking.save();
+    res.status(200).send({ message: 'Booking Successfully moved to Check In' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   addCheckIn,
   getSingleCheckIn,
   getAllCheckIns,
   addAdvanceAmount,
+  updateBookingToCheckIn,
 };

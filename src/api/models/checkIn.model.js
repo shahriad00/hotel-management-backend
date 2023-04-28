@@ -42,6 +42,7 @@ const checkInSchema = new mongoose.Schema({
   pickup: { type: String },
   pickupCharge: { type: Number },
   specialInstruction: { type: String },
+  bookingId: { type: String, default: Date.now().toString() },
 });
 
 const CheckIn = mongoose.model('CheckIn', checkInSchema);

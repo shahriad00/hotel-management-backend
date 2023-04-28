@@ -8,7 +8,7 @@ const router = express.Router();
 router
   .get('/:id', authorize(), controller.getSingleCheckIn)
   .get('/', authorize(), controller.getAllCheckIns)
-  .post('/', authorize(), imageUpload.array('images', 6), controller.addCheckIn);
-// .patch('/:id', authorize(), controller.updateCheckIn);
+  .post('/', authorize(), imageUpload.array('images', 6), controller.addCheckIn)
+  .patch('/move-to-check-in/:id', authorize(), controller.updateBookingToCheckIn);
 
 module.exports = router;
