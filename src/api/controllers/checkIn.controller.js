@@ -1,3 +1,4 @@
+/* eslint-disable array-callback-return */
 const moment = require('moment');
 const CheckIn = require('../models/checkIn.model');
 const Room = require('../models/room.model');
@@ -16,13 +17,14 @@ const updateRoom = async (roomId) => {
   await updatedRoom.save();
 };
 
-const addRoomBookingStatus = async (room, type) => {
+const addRoomBookingStatus = async (room, type, checkInId) => {
   await RoomBookingStatus.create({
     roomId: room.roomId,
     roomName: room.roomName,
     from: room.checkIn,
     to: room.checkOut,
     type,
+    checkInId,
   });
 };
 
@@ -39,11 +41,6 @@ const addCheckIn = async (req, res, next) => {
     const otherPerson = JSON.parse(newOtherPerson);
     const advancePayment = JSON.parse(newAdvancePayment);
     const selectRooms = JSON.parse(newSelectRooms);
-    // eslint-disable-next-line array-callback-return
-    selectRooms.map((room) => {
-      updateRoom(room.roomId);
-      addRoomBookingStatus(room, req.body.type);
-    });
 
     // calculate the duration between the two dates
     const start = moment(checkInDate);
@@ -60,10 +57,12 @@ const addCheckIn = async (req, res, next) => {
       otherPerson,
       durationOfStay,
     });
-    res.status(200).send({
-      message: 'Check In completed successfully',
-      checkIn,
+
+    selectRooms.map((room) => {
+      updateRoom(room.roomId);
+      addRoomBookingStatus(room, req.body.type, checkIn._id);
     });
+
     const advancePaymentAmount = await AdvancePayment.create({
       checkInID: checkIn._id,
       paymentType: advancePayment.paymentType,
@@ -71,6 +70,7 @@ const addCheckIn = async (req, res, next) => {
     });
     res.status(200).send({
       message: 'Check In completed successfully',
+      checkIn,
       advancePaymentAmount,
     });
   } catch (error) {

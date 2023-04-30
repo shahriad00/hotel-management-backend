@@ -6,6 +6,11 @@ const roomBookingStatusSchema = new mongoose.Schema({
     ref: 'Room',
     required: true,
   },
+  checkInId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'CheckIn',
+    required: true,
+  },
   roomName: {
     type: String,
   },
@@ -19,6 +24,7 @@ const roomBookingStatusSchema = new mongoose.Schema({
   },
   type: {
     type: String,
+    default: 'check-in',
   },
 });
 
