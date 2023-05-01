@@ -1,21 +1,10 @@
 /* eslint-disable array-callback-return */
 const moment = require('moment');
 const CheckIn = require('../models/checkIn.model');
-const Room = require('../models/room.model');
 const AdvancePayment = require('../models/advance.model');
 const RoomBookingStatus = require('../models/roomBookingStatus.model');
 
 // room status updated when checked-In
-
-const updateRoom = async (roomId) => {
-  const updatedRoom = await Room.findByIdAndUpdate(
-    { _id: roomId },
-    {
-      status: 'booked',
-    },
-  );
-  await updatedRoom.save();
-};
 
 const addRoomBookingStatus = async (room, type, checkInId) => {
   await RoomBookingStatus.create({
@@ -59,7 +48,6 @@ const addCheckIn = async (req, res, next) => {
     });
 
     selectRooms.map((room) => {
-      updateRoom(room.roomId);
       addRoomBookingStatus(room, req.body.type, checkIn._id);
     });
 

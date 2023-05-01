@@ -17,7 +17,7 @@ const addRoomService = async (req, res, next) => {
 const getRoomServices = async (req, res, next) => {
   try {
     const _id = req.params.id;
-    const roomServices = await RoomService.findOne({ checkInID: _id });
+    const roomServices = await RoomService.find({ checkInID: _id });
     res.status(200).send(roomServices);
   } catch (err) {
     next(err);

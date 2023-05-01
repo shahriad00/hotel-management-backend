@@ -31,7 +31,7 @@ const getAdvancePayment = async (req, res, next) => {
     for (let i = 0; i < advanceAmount.length; i++) {
       totalAmount += parseFloat(advanceAmount[i].amount);
     }
-    res.status(200).send({ totalAmount });
+    res.status(200).send({ advanceAmount, totalAmount });
   } catch (err) {
     next(err);
   }
