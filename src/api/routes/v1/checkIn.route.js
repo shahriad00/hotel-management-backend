@@ -6,9 +6,10 @@ const { imageUpload } = require('../../middlewares/uploadImage');
 const router = express.Router();
 
 router
-  .get('/:id', authorize(), controller.getSingleCheckIn)
-  .get('/', authorize(), controller.getAllCheckIns)
-  .post('/', authorize(), imageUpload.array('images', 6), controller.addCheckIn)
-  .patch('/move-to-check-in/:id', authorize(), controller.updateBookingToCheckIn);
+  .get('/check-in/:id', authorize(), controller.getSingleCheckIn)
+  .get('/check-in/', authorize(), controller.getAllCheckIns)
+  .post('/check-in/', authorize(), imageUpload.array('images', 6), controller.addCheckIn)
+  .patch('/check-in/move-to-check-in/:id', authorize(), controller.updateBookingToCheckIn)
+  .patch('/check-out/:id', authorize(), controller.updateToCheckOut);
 
 module.exports = router;

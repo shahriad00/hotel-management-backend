@@ -152,14 +152,12 @@ const getAvailableRooms = async (req, res, next) => {
 
     // Search for data that falls within the date range
     const selectedRooms = await RoomBookingStatus.find({
-      $or: [
-        {
-          $or: [{ from: { $gte: fromDate } }, { from: { $lte: toDate } }],
-        },
-        {
-          $or: [{ to: { $gte: fromDate } }, { to: { $lte: toDate } }],
-        },
-      ],
+      from: {
+        $lte: toDate,
+      },
+      to: {
+        $gte: fromDate,
+      },
     });
 
     const allRooms = await Room.find({}).sort({ _id: -1 });

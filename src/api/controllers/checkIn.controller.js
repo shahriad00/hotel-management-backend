@@ -129,10 +129,32 @@ const updateBookingToCheckIn = async (req, res, next) => {
   }
 };
 
+// ------------------- checkout -------------------------------
+
+const updateToCheckOut = async (req, res, next) => {
+  try {
+    const _id = req.params.id;
+    const { type } = req.body;
+    const checkOut = await CheckIn.findByIdAndUpdate(
+      { _id },
+      {
+        isCheckedOut: true,
+        type,
+      },
+    );
+    checkOut.save();
+    res.status(200).send({ message: 'Successfully Checked out!' });
+  } catch (err) {
+    next(err);
+    console.log(err);
+  }
+};
+
 module.exports = {
   addCheckIn,
   getSingleCheckIn,
   getAllCheckIns,
   addAdvanceAmount,
+  updateToCheckOut,
   updateBookingToCheckIn,
 };

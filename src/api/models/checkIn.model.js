@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const types = ['booking', 'check-in'];
+const types = ['booking', 'check-in', 'check-out'];
 
 const otherPersonSchema = new mongoose.Schema({
   name: { type: String },
