@@ -150,11 +150,79 @@ const updateToCheckOut = async (req, res, next) => {
   }
 };
 
+// check-in pagination
+
+const checkInPagination = async (req, res, next) => {
+  const { page = 1, limit = 10 } = req.query;
+
+  try {
+    // execute query with page and limit values
+    const allCheckIns = await CheckIn.find({
+      type: 'check-in',
+      isCheckedOut: false,
+    })
+      .sort({ _id: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    // get total documents in the Posts collection
+    const count = await CheckIn.find({
+      type: 'check-in',
+      isCheckedOut: false,
+    }).countDocuments();
+
+    // return response with posts, total pages, and current page
+    res.send({
+      allCheckIns,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
+  } catch (err) {
+    next(err);
+    console.error(err.message);
+  }
+};
+
+const checkOutPagination = async (req, res, next) => {
+  const { page = 1, limit = 10 } = req.query;
+
+  try {
+    // execute query with page and limit values
+    const allCheckOuts = await CheckIn.find({
+      type: 'check-out',
+      isCheckedOut: true,
+    })
+      .sort({ _id: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    // get total documents in the Posts collection
+    const count = await CheckIn.find({
+      type: 'check-out',
+      isCheckedOut: true,
+    }).countDocuments();
+
+    // return response with posts, total pages, and current page
+    res.send({
+      allCheckOuts,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
+  } catch (err) {
+    next(err);
+    console.error(err.message);
+  }
+};
+
 module.exports = {
   addCheckIn,
   getSingleCheckIn,
   getAllCheckIns,
   addAdvanceAmount,
   updateToCheckOut,
+  checkInPagination,
   updateBookingToCheckIn,
+  checkOutPagination,
 };

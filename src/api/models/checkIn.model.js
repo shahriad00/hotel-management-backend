@@ -21,7 +21,7 @@ const checkInSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: false, unique: false },
   mobile: { type: String, required: true },
-  address: { type: String },
+  address: { type: String, required: true },
   country: { type: String },
   guestIdType: { type: String },
   guestIdNo: { type: String },
