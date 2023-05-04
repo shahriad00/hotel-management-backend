@@ -2,6 +2,19 @@ const mongoose = require('mongoose');
 
 const types = ['booking', 'check-in', 'check-out'];
 
+function genRandonString(length) {
+  const chars = 'ABCDEFGHIJKLM0123456789NOPQRSTUVWXYZ';
+  const charLength = chars.length;
+  let result = '';
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * charLength));
+  }
+  return result;
+}
+
+const uniqueId = genRandonString(8);
+
 const otherPersonSchema = new mongoose.Schema({
   name: { type: String },
   idType: { type: String },
@@ -42,7 +55,8 @@ const checkInSchema = new mongoose.Schema({
   pickup: { type: String },
   pickupCharge: { type: Number },
   specialInstruction: { type: String },
-  bookingId: { type: String, default: Date.now().toString() },
+  discount: { type: Number, default: 0 },
+  bookingId: { type: String, default: uniqueId },
 });
 
 const CheckIn = mongoose.model('CheckIn', checkInSchema);

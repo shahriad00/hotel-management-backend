@@ -134,12 +134,13 @@ const updateBookingToCheckIn = async (req, res, next) => {
 const updateToCheckOut = async (req, res, next) => {
   try {
     const _id = req.params.id;
-    const { type } = req.body;
+    const { type, discount } = req.body;
     const checkOut = await CheckIn.findByIdAndUpdate(
       { _id },
       {
         isCheckedOut: true,
         type,
+        discount,
       },
     );
     checkOut.save();
@@ -150,29 +151,37 @@ const updateToCheckOut = async (req, res, next) => {
   }
 };
 
-// check-in pagination
+// -------------- check-in pagination -----------------
 
 const checkInPagination = async (req, res, next) => {
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, search = '' } = req.query;
 
   try {
-    // execute query with page and limit values
     const allCheckIns = await CheckIn.find({
       type: 'check-in',
       isCheckedOut: false,
+      $or: [
+        {
+          name: { $regex: search.toString(), $options: 'i' },
+        },
+        {
+          mobile: { $regex: search.toString(), $options: 'i' },
+        },
+        {
+          bookingId: { $regex: search.toString(), $options: 'i' },
+        },
+      ],
     })
       .sort({ _id: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
 
-    // get total documents in the Posts collection
     const count = await CheckIn.find({
       type: 'check-in',
       isCheckedOut: false,
     }).countDocuments();
 
-    // return response with posts, total pages, and current page
     res.send({
       allCheckIns,
       totalPages: Math.ceil(count / limit),
@@ -185,28 +194,76 @@ const checkInPagination = async (req, res, next) => {
 };
 
 const checkOutPagination = async (req, res, next) => {
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, search = '' } = req.query;
 
   try {
-    // execute query with page and limit values
     const allCheckOuts = await CheckIn.find({
       type: 'check-out',
       isCheckedOut: true,
+      $or: [
+        {
+          name: { $regex: search.toString(), $options: 'i' },
+        },
+        {
+          mobile: { $regex: search.toString(), $options: 'i' },
+        },
+        {
+          bookingId: { $regex: search.toString(), $options: 'i' },
+        },
+      ],
     })
       .sort({ _id: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .exec();
 
-    // get total documents in the Posts collection
     const count = await CheckIn.find({
       type: 'check-out',
       isCheckedOut: true,
     }).countDocuments();
 
-    // return response with posts, total pages, and current page
     res.send({
       allCheckOuts,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
+  } catch (err) {
+    next(err);
+    console.error(err.message);
+  }
+};
+
+const bookingPagination = async (req, res, next) => {
+  const { page = 1, limit = 10, search = '' } = req.query;
+
+  try {
+    const allBookings = await CheckIn.find({
+      type: 'booking',
+      isCheckedOut: false,
+      $or: [
+        {
+          name: { $regex: search.toString(), $options: 'i' },
+        },
+        {
+          mobile: { $regex: search.toString(), $options: 'i' },
+        },
+        {
+          bookingId: { $regex: search.toString(), $options: 'i' },
+        },
+      ],
+    })
+      .sort({ _id: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const count = await CheckIn.find({
+      type: 'booking',
+      isCheckedOut: false,
+    }).countDocuments();
+
+    res.send({
+      allBookings,
       totalPages: Math.ceil(count / limit),
       currentPage: page,
     });
@@ -225,4 +282,5 @@ module.exports = {
   checkInPagination,
   updateBookingToCheckIn,
   checkOutPagination,
+  bookingPagination,
 };
