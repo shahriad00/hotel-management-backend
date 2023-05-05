@@ -28,6 +28,10 @@ const roomTypeSchema = new mongoose.Schema({
   amenityList: {
     type: [String],
   },
+  isPublished: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const RoomType = mongoose.model('RoomType', roomTypeSchema);

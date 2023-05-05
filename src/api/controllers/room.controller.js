@@ -1,4 +1,6 @@
 const moment = require('moment/moment');
+const fs = require('fs');
+const path = require('path');
 const RoomType = require('../models/roomType.model');
 const Room = require('../models/room.model');
 const RoomBookingStatus = require('../models/roomBookingStatus.model');
@@ -30,12 +32,10 @@ const getSingleRoomType = async (req, res, next) => {
 // ------------ get All Room Types -----------------------
 const getAllRoomTypes = async (req, res, next) => {
   try {
-    RoomType.find({})
-      .sort({ _id: -1 })
-      .exec((err, roomTypesList) => {
-        const allRoomTypes = roomTypesList.map((roomType) => roomType);
-        res.status(200).send(allRoomTypes);
-      });
+    const allRoomTypes = await RoomType.find({ isPublished: true }).sort({
+      _id: -1,
+    });
+    res.status(200).send(allRoomTypes);
   } catch (err) {
     next(err);
   }
@@ -45,9 +45,8 @@ const getAllRoomTypes = async (req, res, next) => {
 const updateRoomType = async (req, res, next) => {
   try {
     const _id = req.params.id;
-    const {
-      title, capacity, basePrice, discountPrice, status, amenityList,
-    } = req.body;
+    const { title, capacity, basePrice, discountPrice, status, amenityList } =
+      req.body;
     const updatedRoomType = await RoomType.findByIdAndUpdate(
       { _id },
       {
@@ -57,12 +56,32 @@ const updateRoomType = async (req, res, next) => {
         discountPrice,
         status,
         amenityList,
-      },
+      }
     );
     await updatedRoomType.save();
     res.send({
       message: 'Room Type updated successfully',
       updatedRoomType,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const unpublishRoomType = async (req, res, next) => {
+  try {
+    const _id = req.params.id;
+    const { isPublished } = req.body;
+    const unpublishedRoomType = await RoomType.findByIdAndUpdate(
+      { _id },
+      {
+        isPublished,
+      }
+    );
+    await unpublishedRoomType.save();
+    res.send({
+      message: 'Room Type deleted successfully!',
+      unpublishedRoomType,
     });
   } catch (error) {
     next(error);
@@ -75,8 +94,7 @@ const updateRoomType = async (req, res, next) => {
 const addRoom = async (req, res, next) => {
   try {
     const version = '/v1';
-    const images = req.files
-      && req.files.map((file) => version + file.path.replace('public', ''));
+    const images = req.files && req.files.map((file) => version + file.path.replace('public', ''));
     const room = await Room.create({ ...req.body, images });
     res.status(200).json({
       message: 'Room added successfully',
@@ -92,8 +110,31 @@ const updateRoom = async (req, res, next) => {
   try {
     const _id = req.params.id;
     const {
-      roomTypeId, name, floorNo, status, details, images,
+      roomTypeId,
+      name,
+      floorNo,
+      status,
+      roomDetails,
+      removedImages = [],
+      existingImg = [],
     } = req.body;
+    console.log(req.body);
+    console.log(existingImg);
+    console.log(removedImages);
+    if (removedImages.length > 0) {
+      removedImages.map((imgPath) => {
+        const newPath = imgPath.replace('/v1', '');
+        const dirPath = path.join(__dirname, `/public${newPath}`);
+        const newDirName = dirPath.replace('\\src\\api\\controllers', '');
+        fs.unlink(newDirName, (err) => {
+          if (err) return console.log(err);
+          console.log('file deleted successfully');
+        });
+      });
+    }
+    const version = '/v1';
+    const newImages = (req.files && req.files.map((file) => version + file.path.replace('public', ''))) || '';
+    const finalImage = [...existingImg, ...newImages];
     const updatedRoom = await Room.findByIdAndUpdate(
       { _id },
       {
@@ -101,9 +142,9 @@ const updateRoom = async (req, res, next) => {
         name,
         floorNo,
         status,
-        details,
-        images,
-      },
+        roomDetails,
+        images: finalImage,
+      }
     );
     await updatedRoom.save();
     res.send({
@@ -129,12 +170,8 @@ const getSingleRoom = async (req, res, next) => {
 // ------------ get All Room -----------------------
 const getAllRoom = async (req, res, next) => {
   try {
-    Room.find({})
-      .sort({ _id: -1 })
-      .exec((err, roomList) => {
-        const allRooms = roomList.map((room) => room);
-        res.status(200).send(allRooms);
-      });
+    const allRooms = await Room.find({ isPublished: true }).sort({ _id: -1 });
+    res.status(200).send(allRooms);
   } catch (err) {
     next(err);
   }
@@ -160,7 +197,7 @@ const getAvailableRooms = async (req, res, next) => {
       },
     });
 
-    const allRooms = await Room.find({}).sort({ _id: -1 });
+    const allRooms = await Room.find({ isPublished: true }).sort({ _id: -1 });
 
     res.status(200).send({ allRooms, selectedRooms });
   } catch (error) {
@@ -170,14 +207,30 @@ const getAvailableRooms = async (req, res, next) => {
 
 const getAllRoomStatus = async (req, res, next) => {
   try {
-    RoomBookingStatus.find({})
-      .sort({ _id: -1 })
-      .exec((err, roomStatusList) => {
-        const allRoomStatus = roomStatusList.map((roomStatus) => roomStatus);
-        res.status(200).send(allRoomStatus);
-      });
+    const allRoomStatus = await RoomBookingStatus.find({}).sort({ _id: -1 });
+    res.status(200).send(allRoomStatus);
   } catch (err) {
     next(err);
+  }
+};
+
+const unpublishRoom = async (req, res, next) => {
+  try {
+    const _id = req.params.id;
+    const { isPublished } = req.body;
+    const unpublishedRoom = await Room.findByIdAndUpdate(
+      { _id },
+      {
+        isPublished,
+      }
+    );
+    await unpublishedRoom.save();
+    res.send({
+      message: 'Room deleted successfully!',
+      unpublishedRoom,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -192,4 +245,6 @@ module.exports = {
   getSingleRoomType,
   getAvailableRooms,
   getAllRoomStatus,
+  unpublishRoomType,
+  unpublishRoom,
 };

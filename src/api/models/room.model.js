@@ -23,10 +23,14 @@ const roomSchema = new Schema({
     type: String,
     required: true,
   },
-  details: {
+  roomDetails: {
     type: String,
   },
   images: [String],
+  isPublished: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const Room = mongoose.model('Room', roomSchema);
