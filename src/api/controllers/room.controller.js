@@ -144,7 +144,7 @@ const updateRoom = async (req, res, next) => {
         status,
         roomDetails,
         images: finalImage,
-      }
+      },
     );
     await updatedRoom.save();
     res.send({
