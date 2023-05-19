@@ -44,22 +44,23 @@ const addCheckIn = async (req, res, next) => {
       images,
       selectRooms,
       otherPerson,
-      durationOfStay,
+      durationOfStay: durationOfStay < 1 ? 1 : durationOfStay,
     });
 
     selectRooms.map((room) => {
       addRoomBookingStatus(room, req.body.type, checkIn._id);
     });
 
-    const advancePaymentAmount = await AdvancePayment.create({
-      checkInID: checkIn._id,
-      paymentType: advancePayment.paymentType,
-      amount: advancePayment.amount,
-    });
+    if (advancePayment.paymentType !== '' || advancePayment.amount !== '') {
+      await AdvancePayment.create({
+        checkInID: checkIn._id,
+        paymentType: advancePayment.paymentType,
+        amount: advancePayment.amount,
+      });
+    }
     res.status(200).send({
       message: 'Check In completed successfully',
       checkIn,
-      advancePaymentAmount,
     });
   } catch (error) {
     next(error);
@@ -134,13 +135,14 @@ const updateBookingToCheckIn = async (req, res, next) => {
 const updateToCheckOut = async (req, res, next) => {
   try {
     const _id = req.params.id;
-    const { type, discount } = req.body;
+    const { type, discount, grandTotal } = req.body;
     const checkOut = await CheckIn.findByIdAndUpdate(
       { _id },
       {
         isCheckedOut: true,
         type,
         discount,
+        grandTotal,
       },
     );
     checkOut.save();
@@ -154,7 +156,7 @@ const updateToCheckOut = async (req, res, next) => {
 // -------------- check-in pagination -----------------
 
 const checkInPagination = async (req, res, next) => {
-  const { page = 1, limit = 10, search = '' } = req.query;
+  const { page = 1, limit = 20, search = '' } = req.query;
 
   try {
     const allCheckIns = await CheckIn.find({
@@ -273,6 +275,19 @@ const bookingPagination = async (req, res, next) => {
   }
 };
 
+const deleteBooking = async(req, res, next) => {
+  try {
+    const _id = req.params.id;
+    const deletedBooking = await CheckIn.findByIdAndDelete({ _id });
+    res.send({
+      deletedBooking,
+      message: 'Booking deleted successfully!',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   addCheckIn,
   getSingleCheckIn,
@@ -283,4 +298,5 @@ module.exports = {
   updateBookingToCheckIn,
   checkOutPagination,
   bookingPagination,
+  deleteBooking,
 };

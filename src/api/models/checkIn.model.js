@@ -57,6 +57,7 @@ const checkInSchema = new mongoose.Schema({
   specialInstruction: { type: String },
   discount: { type: Number, default: 0 },
   bookingId: { type: String, default: uniqueId },
+  grandTotal: { type: Number, default: 0 },
 });
 
 const CheckIn = mongoose.model('CheckIn', checkInSchema);

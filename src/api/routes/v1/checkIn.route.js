@@ -13,6 +13,7 @@ router
   .get('/all-check-in', authorize(), controller.getAllCheckIns)
   .post('/check-in/', authorize(), imageUpload.array('images', 6), controller.addCheckIn)
   .patch('/check-in/move-to-check-in/:id', authorize(), controller.updateBookingToCheckIn)
-  .patch('/check-out/:id', authorize(), controller.updateToCheckOut);
+  .patch('/check-out/:id', authorize(), controller.updateToCheckOut)
+  .delete('/delete-booking/:id', authorize(), controller.deleteBooking);
 
 module.exports = router;
