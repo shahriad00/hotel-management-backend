@@ -1,3 +1,6 @@
+/* eslint-disable consistent-return */
+/* eslint-disable array-callback-return */
+/* eslint-disable object-curly-newline */
 const moment = require('moment/moment');
 const fs = require('fs');
 const path = require('path');

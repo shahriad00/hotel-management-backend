@@ -275,7 +275,7 @@ const bookingPagination = async (req, res, next) => {
   }
 };
 
-const deleteBooking = async(req, res, next) => {
+const deleteBooking = async (req, res, next) => {
   try {
     const _id = req.params.id;
     const deletedBooking = await CheckIn.findByIdAndDelete({ _id });
