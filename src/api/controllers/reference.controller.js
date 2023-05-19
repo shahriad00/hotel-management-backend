@@ -49,14 +49,30 @@ const getSingleReference = async (req, res, next) => {
 // ------------ get All Reference -----------------------
 const getAllReference = async (req, res, next) => {
   try {
-    Reference.find({})
-      .sort({ _id: -1 })
-      .exec((err, referenceList) => {
-        const allReferences = referenceList.map((reference) => reference);
-        res.status(200).send(allReferences);
-      });
+    const allReferences = await Reference.find({ isPublished: true }).sort({ _id: -1 });
+    res.status(200).send(allReferences);
   } catch (err) {
     next(err);
+  }
+};
+
+const unpublishReference = async (req, res, next) => {
+  try {
+    const _id = req.params.id;
+    const { isPublished } = req.body;
+    const unpublishedReference = await Reference.findByIdAndUpdate(
+      { _id },
+      {
+        isPublished,
+      },
+    );
+    await unpublishedReference.save();
+    res.send({
+      message: 'Reference deleted successfully!',
+      unpublishedReference,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -65,4 +81,5 @@ module.exports = {
   updateReference,
   getSingleReference,
   getAllReference,
+  unpublishReference,
 };

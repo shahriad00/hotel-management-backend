@@ -45,8 +45,7 @@ const getAllRoomTypes = async (req, res, next) => {
 const updateRoomType = async (req, res, next) => {
   try {
     const _id = req.params.id;
-    const { title, capacity, basePrice, discountPrice, status, amenityList } =
-      req.body;
+    const { title, capacity, basePrice, discountPrice, status, amenityList } = req.body;
     const updatedRoomType = await RoomType.findByIdAndUpdate(
       { _id },
       {
@@ -56,7 +55,7 @@ const updateRoomType = async (req, res, next) => {
         discountPrice,
         status,
         amenityList,
-      }
+      },
     );
     await updatedRoomType.save();
     res.send({
@@ -76,7 +75,7 @@ const unpublishRoomType = async (req, res, next) => {
       { _id },
       {
         isPublished,
-      }
+      },
     );
     await unpublishedRoomType.save();
     res.send({
@@ -118,9 +117,6 @@ const updateRoom = async (req, res, next) => {
       removedImages = [],
       existingImg = [],
     } = req.body;
-    console.log(req.body);
-    console.log(existingImg);
-    console.log(removedImages);
     if (removedImages.length > 0) {
       removedImages.map((imgPath) => {
         const newPath = imgPath.replace('/v1', '');
@@ -133,7 +129,7 @@ const updateRoom = async (req, res, next) => {
       });
     }
     const version = '/v1';
-    const newImages = (req.files && req.files.map((file) => version + file.path.replace('public', ''))) || '';
+    const newImages = (req.files && req.files.map((file) => version + file.path.replace('public', ''))) || [];
     const finalImage = [...existingImg, ...newImages];
     const updatedRoom = await Room.findByIdAndUpdate(
       { _id },
@@ -205,9 +201,11 @@ const getAvailableRooms = async (req, res, next) => {
   }
 };
 
+// get all rooms status for calender
+
 const getAllRoomStatus = async (req, res, next) => {
   try {
-    const allRoomStatus = await RoomBookingStatus.find({}).sort({ _id: -1 });
+    const allRoomStatus = await RoomBookingStatus.find().sort({ _id: -1 });
     res.status(200).send(allRoomStatus);
   } catch (err) {
     next(err);
@@ -222,7 +220,7 @@ const unpublishRoom = async (req, res, next) => {
       { _id },
       {
         isPublished,
-      }
+      },
     );
     await unpublishedRoom.save();
     res.send({

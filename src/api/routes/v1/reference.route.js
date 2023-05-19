@@ -8,6 +8,7 @@ router
   .get('/:id', authorize(), controller.getSingleReference)
   .get('/', authorize(), controller.getAllReference)
   .post('/', authorize(), controller.addReference)
-  .patch('/:id', authorize(), controller.updateReference);
+  .patch('/:id', authorize(), controller.updateReference)
+  .patch('/unpublish-reference/:id', authorize(), controller.unpublishReference);
 
 module.exports = router;

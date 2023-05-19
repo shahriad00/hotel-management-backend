@@ -14,6 +14,10 @@ const referenceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: Boolean,
+    required: true,
+  },
   isPublished: {
     type: Boolean,
     default: true,
