@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment/moment');
 
 const { Schema } = mongoose;
 
@@ -21,8 +22,8 @@ const roomServiceSchema = new Schema({
     required: true,
   },
   date: {
-    type: String,
-    default: new Date(),
+    type: Date,
+    default: moment(new Date()).format('YYYY-MM-DD'),
   },
 });
 

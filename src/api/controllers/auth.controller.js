@@ -1,6 +1,6 @@
 const httpStatus = require('http-status');
 const moment = require('moment-timezone');
-const { omit } = require('lodash');
+const bcrypt = require('bcryptjs');
 const User = require('../models/user.model');
 const RefreshToken = require('../models/refreshToken.model');
 const PasswordResetToken = require('../models/passwordResetToken.model');
@@ -30,8 +30,7 @@ function generateTokenResponse(user, accessToken) {
  */
 exports.register = async (req, res, next) => {
   try {
-    const userData = omit(req.body, 'role');
-    const user = await new User(userData).save();
+    const user = await new User({ ...req.body }).save();
     const userTransformed = user.transform();
     const token = generateTokenResponse(user, user.token());
     res.status(httpStatus.CREATED);
@@ -84,7 +83,10 @@ exports.refresh = async (req, res, next) => {
       userEmail: email,
       token: refreshToken,
     });
-    const { user, accessToken } = await User.findAndGenerateToken({ email, refreshObject });
+    const { user, accessToken } = await User.findAndGenerateToken({
+      email,
+      refreshObject,
+    });
     const response = generateTokenResponse(user, accessToken);
     return res.json(response);
   } catch (error) {
@@ -112,34 +114,72 @@ exports.sendPasswordReset = async (req, res, next) => {
   }
 };
 
+// exports.resetPassword = async (req, res, next) => {
+//   try {
+//     const { email, password, resetToken } = req.body;
+//     const resetTokenObject = await PasswordResetToken.findOneAndRemove({
+//       userEmail: email,
+//       resetToken,
+//     });
+
+//     const err = {
+//       status: httpStatus.UNAUTHORIZED,
+//       isPublic: true,
+//     };
+//     if (!resetTokenObject) {
+//       err.message = 'Cannot find matching reset token';
+//       throw new APIError(err);
+//     }
+//     if (moment().isAfter(resetTokenObject.expires)) {
+//       err.message = 'Reset token is expired';
+//       throw new APIError(err);
+//     }
+
+//     const user = await User.findOne({ email: resetTokenObject.userEmail }).exec();
+//     user.password = password;
+//     await user.save();
+//     emailProvider.sendPasswordChangeEmail(user);
+
+//     res.status(httpStatus.OK);
+//     return res.json('Password Updated');
+//   } catch (error) {
+//     return next(error);
+//   }
+// };
 exports.resetPassword = async (req, res, next) => {
   try {
-    const { email, password, resetToken } = req.body;
-    const resetTokenObject = await PasswordResetToken.findOneAndRemove({
-      userEmail: email,
-      resetToken,
-    });
+    const { email, oldPassword, newPassword } = req.body;
 
-    const err = {
-      status: httpStatus.UNAUTHORIZED,
-      isPublic: true,
-    };
-    if (!resetTokenObject) {
-      err.message = 'Cannot find matching reset token';
-      throw new APIError(err);
-    }
-    if (moment().isAfter(resetTokenObject.expires)) {
-      err.message = 'Reset token is expired';
-      throw new APIError(err);
+    const user = await User.findOne({ email }).exec();
+
+    if (newPassword.length < 6) {
+      throw new APIError({
+        message: 'Password should be at least 6 characters!',
+        status: 404,
+      });
     }
 
-    const user = await User.findOne({ email: resetTokenObject.userEmail }).exec();
-    user.password = password;
-    await user.save();
-    emailProvider.sendPasswordChangeEmail(user);
+    if (!user) {
+      throw new APIError({
+        message: 'User does not exist',
+        status: 404,
+      });
+    }
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
 
-    res.status(httpStatus.OK);
-    return res.json('Password Updated');
+    if (!isMatch) {
+      throw new APIError({
+        message: 'password does not match',
+        status: 404,
+      });
+    } else {
+      user.password = newPassword;
+      await user.save();
+
+      res.status(200).send({
+        message: 'Password changed successfully!',
+      });
+    }
   } catch (error) {
     return next(error);
   }

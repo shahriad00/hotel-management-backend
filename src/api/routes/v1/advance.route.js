@@ -5,7 +5,7 @@ const { authorize } = require('../../middlewares/auth');
 const router = express.Router();
 
 router
-  .get('/advance-payment/:id', authorize(), controller.getAdvancePayment)
-  .post('/advance-payment/', authorize(), controller.addAdvancePayment);
+  .get('/:id', authorize(), controller.getAdvancePayment)
+  .post('/', authorize(), controller.addAdvancePayment);
 
 module.exports = router;

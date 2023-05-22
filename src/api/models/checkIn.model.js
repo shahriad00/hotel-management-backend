@@ -1,8 +1,9 @@
+const moment = require('moment/moment');
 const mongoose = require('mongoose');
 
 const types = ['booking', 'check-in', 'check-out'];
 
-function genRandonString(length) {
+function getRandonString(length) {
   const chars = 'ABCDEFGHIJKLM0123456789NOPQRSTUVWXYZ';
   const charLength = chars.length;
   let result = '';
@@ -13,7 +14,7 @@ function genRandonString(length) {
   return result;
 }
 
-const uniqueId = genRandonString(8);
+const uniqueId = getRandonString(8);
 
 const otherPersonSchema = new mongoose.Schema({
   name: { type: String },
@@ -50,7 +51,7 @@ const checkInSchema = new mongoose.Schema({
   amountFixed: { type: Number },
   durationOfStay: { type: Number },
   isCheckedOut: { type: Boolean, default: false },
-  date: { type: Date, default: new Date() },
+  date: { type: Date, default: moment(new Date()).format('YYYY-MM-DD') },
   type: { type: String, enum: types, default: 'check-in' },
   pickup: { type: String },
   pickupCharge: { type: Number },

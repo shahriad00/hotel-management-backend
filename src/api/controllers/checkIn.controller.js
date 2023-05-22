@@ -10,8 +10,8 @@ const addRoomBookingStatus = async (room, type, checkInId) => {
   await RoomBookingStatus.create({
     roomId: room.roomId,
     roomName: room.roomName,
-    from: room.checkIn,
-    to: room.checkOut,
+    from: moment(room.checkIn).format('YYYY-MM-DD'),
+    to: moment(room.checkOut).format('YYYY-MM-DD'),
     type,
     checkInId,
   });

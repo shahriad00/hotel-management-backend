@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment/moment');
 
 const advancePaymentSchema = new mongoose.Schema({
   checkInID: {
@@ -11,10 +12,11 @@ const advancePaymentSchema = new mongoose.Schema({
   },
   paymentDate: {
     type: Date,
-    default: new Date(),
+    default: moment(new Date()).format('YYYY-MM-DD'),
   },
   amount: {
     type: Number,
+    require: true,
   },
 });
 

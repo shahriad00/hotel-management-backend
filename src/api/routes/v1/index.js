@@ -35,7 +35,7 @@ router.use('/', checkInRoute);
 
 router.use('/reference', referenceRoute);
 
-router.use('/', advanceRoute);
+router.use('/advance-payment', advanceRoute);
 
 router.use('/room-service', roomServiceRoute);
 

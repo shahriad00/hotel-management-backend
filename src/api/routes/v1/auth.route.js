@@ -10,6 +10,7 @@ const {
   sendPasswordReset,
   passwordReset,
 } = require('../../validations/auth.validation');
+const { authorize } = require('../../middlewares/auth');
 
 const router = express.Router();
 
@@ -99,7 +100,7 @@ router.route('/send-password-reset')
   .post(validate(sendPasswordReset), controller.sendPasswordReset);
 
 router.route('/reset-password')
-  .post(validate(passwordReset), controller.resetPassword);
+  .post(authorize(), controller.resetPassword);
 
 /**
  * @api {post} v1/auth/facebook Facebook Login

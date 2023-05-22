@@ -7,14 +7,14 @@ const totalIncome = async (req, res, next) => {
   const { page = 1, limit = 30, from = '', to = '' } = req.query;
   let grandTotal = 0;
   try {
-    const fromDate = moment(from).startOf('day');
-    const toDate = moment(to).endOf('day');
+    const fromDate = moment(from).format('YYYY-MM-DD');
+    const toDate = moment(to).format('YYYY-MM-DD');
 
     const allIncome = await CheckIn.find({
       isCheckedOut: true,
       checkOut: {
-        $gte: fromDate.toDate(),
-        $lte: toDate.toDate(),
+        $gte: fromDate,
+        $lte: toDate,
       },
     })
       .sort({ _id: -1 })
@@ -25,8 +25,8 @@ const totalIncome = async (req, res, next) => {
     const count = await CheckIn.find({
       isCheckedOut: true,
       checkOut: {
-        $gte: fromDate.toDate(),
-        $lte: toDate.toDate(),
+        $gte: fromDate,
+        $lte: toDate,
       },
     }).countDocuments();
 

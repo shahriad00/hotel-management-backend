@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment/moment');
 
 const { Schema } = mongoose;
 
@@ -16,7 +17,7 @@ const totalExpenseSchema = new Schema({
   },
   date: {
     type: Date,
-    default: new Date(),
+    default: moment(new Date()).format('YYYY-MM-DD'),
   },
 });
 
