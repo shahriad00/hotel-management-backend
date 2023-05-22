@@ -5,6 +5,6 @@ const { authorize } = require('../../middlewares/auth');
 const router = express.Router();
 
 router
-  .get('/', authorize(), controller.totalIncome);
+  .get('/search', authorize(), controller.totalIncome);
 
 module.exports = router;

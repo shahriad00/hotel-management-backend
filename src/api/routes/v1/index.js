@@ -8,6 +8,7 @@ const referenceRoute = require('./reference.route');
 const advanceRoute = require('./advance.route');
 const roomServiceRoute = require('./roomService.route');
 const totalIncomeRoute = require('./totalIncome.route');
+const totalExpenseRoute = require('./totalExpense.route');
 
 const router = express.Router();
 
@@ -36,6 +37,8 @@ router.use('/reference', referenceRoute);
 router.use('/', advanceRoute);
 
 router.use('/room-service', roomServiceRoute);
+
+router.use('/expense', totalExpenseRoute);
 
 router.use('/all-income', totalIncomeRoute);
 

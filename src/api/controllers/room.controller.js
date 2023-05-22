@@ -182,17 +182,16 @@ const getAvailableRooms = async (req, res, next) => {
   try {
     const { from, to } = req.query;
 
-    // Convert the query parameters to Date objects
-    const fromDate = moment(from).format('YYYY-MM-DD');
-    const toDate = moment(to).format('YYYY-MM-DD');
+    const fromDate = moment(from).startOf('day');
+    const toDate = moment(to).endOf('day');
 
-    // Search for data that falls within the date range
+    // Searching for date that falls within the date range
     const selectedRooms = await RoomBookingStatus.find({
       from: {
-        $lte: toDate,
+        $lte: toDate.toDate(),
       },
       to: {
-        $gte: fromDate,
+        $gte: fromDate.toDate(),
       },
     });
 
