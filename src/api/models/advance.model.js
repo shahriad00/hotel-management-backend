@@ -9,6 +9,7 @@ const advancePaymentSchema = new mongoose.Schema({
   },
   paymentType: {
     type: String,
+    required: true,
   },
   paymentDate: {
     type: Date,

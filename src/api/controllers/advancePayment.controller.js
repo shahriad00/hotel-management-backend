@@ -7,12 +7,14 @@ const addAdvancePayment = async (req, res, next) => {
 
     await AdvancePayment.create({ ...req.body });
 
-    const advanceAmount = await AdvancePayment.find({ checkInID: _id });
+    const advanceAmount = await AdvancePayment.find({ checkInID: _id }).exec();
 
     let totalAmount = 0;
 
     for (let i = 0; i < advanceAmount.length; i++) {
-      totalAmount += parseFloat(advanceAmount[i].amount);
+      if (advanceAmount[i].amount) {
+        totalAmount += parseFloat(advanceAmount[i].amount);
+      }
     }
     res.status(200).send({ totalAmount });
   } catch (err) {

@@ -51,7 +51,7 @@ const addCheckIn = async (req, res, next) => {
       addRoomBookingStatus(room, req.body.type, checkIn._id);
     });
 
-    if (advancePayment.paymentType !== '' || advancePayment.amount !== '') {
+    if (advancePayment.paymentType !== '' && Number.isNaN(!advancePayment.amount)) {
       await AdvancePayment.create({
         checkInID: checkIn._id,
         paymentType: advancePayment.paymentType,
