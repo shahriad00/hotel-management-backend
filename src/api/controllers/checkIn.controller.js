@@ -124,6 +124,13 @@ const updateBookingToCheckIn = async (req, res, next) => {
       { type },
     );
     updateBooking.save();
+    const updateRoomBookingStatus = await RoomBookingStatus.findOneAndUpdate(
+      { checkInId: _id },
+      {
+        type,
+      },
+    );
+    updateRoomBookingStatus.save();
     res.status(200).send({ message: 'Booking Successfully moved to Check In' });
   } catch (err) {
     next(err);
